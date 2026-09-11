@@ -1,6 +1,8 @@
 package com.learning.springbootdemo;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -17,11 +19,21 @@ public class SoftwareEngineerService {
         return softwareEngineerRepository.findAll();
     }
 
-    public void insertSoftwareEngineer(SoftwareEngineer softwareEngineer) {
-        softwareEngineerRepository.save(softwareEngineer);
+    public SoftwareEngineer getSoftwareEngineersById(Integer id) {
+        return softwareEngineerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Software Engineer with ID " + id + " not found"));
     }
 
-    public SoftwareEngineer getSoftwareEngineersById(Integer id) {
-        return softwareEngineerRepository.findById(id).orElseThrow(() -> new IllegalStateException(id + " not found."));
+    public List<SoftwareEngineer> getSoftwareEngineerByName(String name) {
+        return softwareEngineerRepository.findAllByNameContaining(name);
+    }
+
+    public List<SoftwareEngineer> getSoftwareEngineerFilterByTechStack(String techStack) {
+        return softwareEngineerRepository.findByTechStackContainingIgnoreCase(techStack);
+    }
+
+    public void insertSoftwareEngineer(SoftwareEngineer softwareEngineer) {
+        softwareEngineerRepository.save(softwareEngineer);
     }
 }

@@ -27,6 +27,16 @@ public class SoftwareEngineerController {
         return softwareEngineerService.getSoftwareEngineersById(id);
     }
 
+    @GetMapping("/search")
+    public List<SoftwareEngineer> getEngineerSearchByName(@RequestParam String name) {
+        return softwareEngineerService.getSoftwareEngineerByName(name);
+    }
+
+    @GetMapping("/filter")
+    public List<SoftwareEngineer> findByTechStackContainingIgnoreCase(@RequestParam String techStack) {
+        return softwareEngineerService.getSoftwareEngineerFilterByTechStack(techStack);
+    }
+
     @PostMapping
     public void addNewSoftwareEngineer(@RequestBody SoftwareEngineer softwareEngineer) {
         softwareEngineerService.insertSoftwareEngineer(softwareEngineer);
