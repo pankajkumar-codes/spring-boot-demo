@@ -1,4 +1,23 @@
 # spring-boot-demo
+## Configuration
+
+Database settings come from environment variables. The defaults are for local development only; set your own values anywhere else.
+
+| Variable | Default | Used by |
+|---|---|---|
+| `DB_HOST` | `localhost` | app |
+| `DB_PORT` | `5332` | app and docker-compose (host port) |
+| `DB_NAME` | `software-engineers` | app and docker-compose |
+| `DB_USER` | `software-engineers` | app and docker-compose |
+| `DB_PASSWORD` | `password` | app and docker-compose |
+
+```
+export DB_PASSWORD='choose-a-password'
+docker compose up -d
+./mvnw spring-boot:run
+```
+Do not commit real credentials. Change the password before the first `docker compose up`, because the volume keeps the one it was created with.
+
 ## API
 
 Base path `/api/v1/software-engineers`: `GET` (optional `page`, `size`), `GET /{id}`, `GET /search?name=`, `GET /filter?techStack=`, `POST`, `PUT /{id}`, `DELETE /{id}`.
