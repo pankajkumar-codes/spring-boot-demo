@@ -3,14 +3,14 @@ services:
     container_name: postgres-spring-boot-demo
     image: postgres:latest
     environment:
-      POSTGRES_USER: software-engineers
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: studenttables
+      POSTGRES_USER: ${DB_USER:-software-engineers}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-software-engineers}
       PGDATA: /data/postgres
     volumes:
       - db:/data/postgres
     ports:
-      - "5332:5432"
+      - "${DB_PORT:-5332}:5432"
     networks:
       - db
     restart: unless-stopped
