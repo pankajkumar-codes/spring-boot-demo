@@ -17,6 +17,9 @@ import java.util.List;
 @RequestMapping("api/v1/software-engineers")
 public class SoftwareEngineerController {
 
+    /** page * size must fit an int (Spring Data offset); 100000 * the largest size (100) is far below that. */
+    static final int MAX_PAGE = 100_000;
+
     private final SoftwareEngineerService softwareEngineerService;
 
     public SoftwareEngineerController(SoftwareEngineerService softwareEngineerService) {
@@ -26,7 +29,7 @@ public class SoftwareEngineerController {
     /** Without page and size the full list is returned (backwards compatible); with them, one page. */
     @GetMapping
     public List<SoftwareEngineer> getEngineers(
-            @RequestParam(required = false) @Min(0) Integer page,
+            @RequestParam(required = false) @Min(0) @Max(MAX_PAGE) Integer page,
             @RequestParam(required = false) @Min(1) @Max(100) Integer size) {
         if (page == null && size == null) {
             return softwareEngineerService.getAllSoftwareEngineers();
