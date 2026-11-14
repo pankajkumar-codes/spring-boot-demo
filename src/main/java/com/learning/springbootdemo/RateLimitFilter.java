@@ -4,7 +4,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,6 +22,7 @@ import java.util.function.LongSupplier;
  * peer address: X-Forwarded-For is deliberately ignored because any caller can forge it.
  */
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 1) // right after SecurityHeadersFilter, so 429 responses carry its headers too
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private static final int MAX_CLIENTS = 10_000;
@@ -30,10 +34,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private final LongSupplier nanoClock;
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public RateLimitFilter(@Value("${app.rate-limit.enabled:true}") boolean enabled,
                            @Value("${app.rate-limit.requests-per-second:50}") double requestsPerSecond,
-                           @Value("${app.rate-limit.burst:20}") int burst) {
+                           @Value("${app.rate-limit.burst:10}") int burst) {
         this(enabled, requestsPerSecond, burst, System::nanoTime);
     }
 

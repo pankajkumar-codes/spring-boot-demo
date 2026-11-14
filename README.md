@@ -20,7 +20,7 @@ Do not commit real credentials. Change the password before the first `docker com
 
 ### Rate limit
 
-Each client (TCP peer address; `X-Forwarded-For` is ignored because it can be forged) gets a token bucket: `RATE_LIMIT_RPS` tokens per second (default `50`) up to `RATE_LIMIT_BURST` (default `20`). Over the limit the API answers `429` with `Retry-After: 1`. `RATE_LIMIT_ENABLED=false` turns it off. Behind a reverse proxy every request has the proxy's address, so limit at the proxy instead.
+Each client (TCP peer address; `X-Forwarded-For` is ignored because it can be forged) gets a token bucket: `RATE_LIMIT_RPS` tokens per second (default `50`) up to `RATE_LIMIT_BURST` (default `10`). Over the limit the API answers `429` with `Retry-After: 1`. `RATE_LIMIT_ENABLED=false` turns it off. Behind a reverse proxy every request has the proxy's address, so limit at the proxy instead.
 
 ## API
 
