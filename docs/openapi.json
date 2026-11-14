@@ -48,6 +48,9 @@
      },
      "400": {
       "description": "invalid parameter"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    },
@@ -76,6 +79,9 @@
      },
      "400": {
       "description": "invalid body"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    }
@@ -107,6 +113,9 @@
      },
      "404": {
       "description": "not found"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    },
@@ -149,6 +158,9 @@
      },
      "404": {
       "description": "not found"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    },
@@ -171,6 +183,9 @@
      },
      "404": {
       "description": "not found"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    }
@@ -206,6 +221,9 @@
      },
      "400": {
       "description": "invalid parameter"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    }
@@ -241,6 +259,9 @@
      },
      "400": {
       "description": "invalid parameter"
+     },
+     "429": {
+      "description": "Too many requests from this client; retry after the Retry-After seconds"
      }
     }
    }
