@@ -3,6 +3,8 @@ package com.learning.springbootdemo;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -38,6 +40,42 @@ public class ApiExceptionHandler {
         return org.springframework.http.ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .header("Retry-After", "5")
                 .body(ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, "Service temporarily unavailable"));
+    }
+
+    /**
+     * A query that hit the JDBC socket timeout leaves a dead connection, and the rollback that follows fails too.
+     * Spring wraps that as a generic JpaSystemException, so look at the cause chain before calling it a bug.
+     */
+    @ExceptionHandler({QueryTimeoutException.class, JpaSystemException.class})
+    public org.springframework.http.ResponseEntity<ProblemDetail> databaseTimeoutOrFailure(Exception ex) {
+        if (ex instanceof QueryTimeoutException || isConnectionFailure(ex)) {
+            return databaseUnavailable(ex);
+        }
+        log.error("Unhandled error", ex);
+        return org.springframework.http.ResponseEntity.internalServerError()
+                .body(ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"));
+    }
+
+    private static boolean isConnectionFailure(Throwable ex) {
+        for (Throwable t = ex; t != null; t = t.getCause() == t ? null : t.getCause()) {
+            if (t instanceof java.net.SocketTimeoutException) {
+                return true;
+            }
+            if (t instanceof java.sql.SQLException sql && (hasConnectionState(sql) || isClosedConnection(sql))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasConnectionState(java.sql.SQLException sql) {
+        return sql.getSQLState() != null && sql.getSQLState().startsWith("08");
+    }
+
+    /** The pool reports a connection it already dropped without any SQLState, only a message. */
+    private static boolean isClosedConnection(java.sql.SQLException sql) {
+        String message = sql.getMessage() == null ? "" : sql.getMessage().toLowerCase(java.util.Locale.ROOT);
+        return message.contains("connection is closed") || message.contains("connection has been closed");
     }
 
     @ExceptionHandler(Exception.class)
