@@ -10,6 +10,8 @@ Database settings come from environment variables. The defaults are for local de
 | `DB_NAME` | `software-engineers` | app and docker-compose |
 | `DB_USER` | `software-engineers` | app and docker-compose |
 | `DB_PASSWORD` | `password` | app and docker-compose |
+| `DB_CONNECT_TIMEOUT` | `2` | app (seconds to connect and log in) |
+| `DB_SOCKET_TIMEOUT` | `2` | app (seconds a query waits for the database to answer) |
 
 ```
 export DB_PASSWORD='choose-a-password'
@@ -17,6 +19,10 @@ docker compose up -d
 ./mvnw spring-boot:run
 ```
 Do not commit real credentials. Change the password before the first `docker compose up`, because the volume keeps the one it was created with.
+
+### Database timeouts
+
+If the database goes away or stops answering (for example a frozen server), requests fail within about 2 to 3 seconds with `503` and `Retry-After: 5` instead of hanging. The JDBC `connectTimeout`, `loginTimeout` and `socketTimeout` come from the two variables above; Hikari waits at most 3 s for a pooled connection. Set `DB_SOCKET_TIMEOUT` higher than your slowest legitimate query, because a query that exceeds it is cut off and answered with `503`.
 
 ### Rate limit
 
